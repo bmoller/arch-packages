@@ -1,0 +1,30 @@
+# Maintainer: Brandon Moller <brandon@bkmoller.net>
+pkgname=spacebar
+pkgver=23.01.0
+pkgrel=1
+pkgdesc="SMS/MMS application for Plasma Mobile"
+arch=('x86_64')
+url="https://invent.kde.org/plasma-mobile/spacebar"
+license=('GPL-3.0-or-later')
+depends=('c-ares' 'curl' 'futuresql-qt5' 'gcc-libs' 'glibc' 'hicolor-icon-theme'
+         'ki18n5' 'kconfig5' 'kcontacts5' 'kcoreaddons5' 'kdbusaddons5' 'kio5'
+         'kirigami2' 'kirigami-addons5' 'knotifications5' 'kpeople5' 'kservice5'
+         'kwindowsystem5' 'libphonenumber' 'modemmanager-qt5'
+         'qt5-base' 'qt5-declarative')
+makedepends=('extra-cmake-modules' 'gettext' 'git' 'pkgconf' 'qcoro-qt5')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=("https://invent.kde.org/plasma-mobile/${pkgname}/-/archive/v${pkgver}/${pkgname}-v${pkgver}.tar.bz2")
+sha256sums=('51e41f72d64595ff99d7ffc2465cb85c9441c02d237c18f7ad8a5ae8d0c4cb5d')
+
+build() {
+    cmake -B build -S "${srcdir}/${pkgname}-v${pkgver}" \
+        -DCMAKE_BUILD_TYPE='None' \
+        -DCMAKE_INSTALL_PREFIX='/usr' \
+        -Wno-dev
+    cmake --build build  
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install build
+}

@@ -1,0 +1,24 @@
+# Maintainer: Your Name <youremail@domain.com>
+pkgname=crispy-doom
+pkgver=7.0
+pkgrel=1
+pkgdesc="A limit-removing enhanced-resolution Doom port"
+arch=('x86_64')
+url="https://fabiangreffrath.github.io/crispy-homepage/"
+license=('GPL-2.0-only')
+depends=('fluidsynth' 'glibc' 'hicolor-icon-theme' 'libpng' 'libsamplerate' 'sdl2' 'sdl2_mixer' 'sdl2_net' 'zlib')
+makedepends=('automake' 'python')
+source=("https://github.com/fabiangreffrath/${pkgname}/archive/refs/tags/${pkgname}-${pkgver}.tar.gz")
+sha256sums=('25eea88fdbe1320ad0d1a3e0ed66ae8d985c39b79e442beab5fc36d9d5ddfc42')
+
+build() {
+	cd "${pkgname}-${pkgname}-${pkgver}"
+	autoreconf -fiv
+    ./configure --prefix=/usr
+	make
+}
+
+package() {
+	cd "${pkgname}-${pkgname}-${pkgver}"
+	make DESTDIR="$pkgdir/" install
+}

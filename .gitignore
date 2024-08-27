@@ -1,0 +1,11 @@
+# makepkg work directories
+*/pkg
+*/src
+
+# compiled packages
+*/*.pkg.tar.zst
+
+# downloaded sources
+*/*.tar.bz2
+*/*.tar.gz
+*/*.zip

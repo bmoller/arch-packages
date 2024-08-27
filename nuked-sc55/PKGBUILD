@@ -1,0 +1,48 @@
+# Maintainer: Your Name <youremail@domain.com>
+pkgname=nuked-sc55
+pkgver=0.3.1
+pkgrel=1
+pkgdesc="A Roland SC-55 emulator"
+arch=('x86_64')
+url="https://github.com/nukeykt/Nuked-SC55"
+license=('LicenseRef-MAME')
+depends=('gcc-libs' 'glibc' 'rtmidi' 'sdl2')
+makedepends=('cmake')
+source=("https://github.com/nukeykt/Nuked-SC55/archive/refs/tags/${pkgver}.tar.gz"
+        "https://dbwbp.com/synthbin/Roland%20SC-55%20mkII.zip")
+sha256sums=('339d807361819793606093588782ad7d3706bd7aa8cff09fb26bd0ce15a70e54'
+            '426d01275890bdbb7e1ec3dad269286436edb67afe9ca7c30533600190332d65')
+
+build() {
+	cmake -B build -S "Nuked-SC55-${pkgver}" \
+        -DCMAKE_BUILD_TYPE=none \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -Wno-dev \
+        -DUSE_SYSTEM_RTMIDI=ON \
+        -DCFLAGS="$CFLAGS" \
+        -DCXXFLAGS="$CXXFLAGS"
+	VERBOSE=1 cmake --build build
+}
+
+package() {
+	DESTDIR="$pkgdir" cmake --install build
+    install -D -m644 \
+        -t "${pkgdir}/usr/share/licenses/nuked-sc55" \
+        "Nuked-SC55-${pkgver}/LICENSE"
+
+    install -m644 -T \
+        sc55mk2/r00233567_control.bin \
+        "${pkgdir}/usr/share/nuked-sc55/rom2.bin"
+    install -m644 -T \
+        sc55mk2/r15199858_main_mcu.bin \
+        "${pkgdir}/usr/share/nuked-sc55/rom1.bin"
+    install -m644 -T \
+        sc55mk2/r15199880_secondary_mcu.bin \
+        "${pkgdir}/usr/share/nuked-sc55/rom_sm.bin"
+    install -m644 -T \
+        sc55mk2/r15209359_pcm_1.bin \
+        "${pkgdir}/usr/share/nuked-sc55/waverom1.bin"
+    install -m644 -T \
+        sc55mk2/r15279813_pcm_2.bin \
+        "${pkgdir}/usr/share/nuked-sc55/waverom2.bin"
+}

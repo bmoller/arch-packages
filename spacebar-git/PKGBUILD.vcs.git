@@ -1,0 +1,36 @@
+# Maintainer: Brandon Moller <brandon@bkmoller.net>
+pkgname=spacebar-git
+pkgver=v23.01.0.r183.a020fad
+pkgrel=1
+pkgdesc="SMS/MMS application for Plasma Mobile"
+arch=('x86_64')
+url="https://invent.kde.org/plasma-mobile/spacebar"
+license=('GPL-3.0-or-later')
+depends=('c-ares' 'curl' 'futuresql-qt6' 'gcc-libs' 'glibc' 'hicolor-icon-theme'
+         'ki18n' 'kconfig' 'kcontacts' 'kcoreaddons' 'kdbusaddons' 'kio'
+         'kirigami' 'kirigami-addons' 'knotifications' 'kpeople' 'kservice'
+         'kwindowsystem' 'libphonenumber' 'modemmanager-qt' 'qt6-5compat'
+         'qt6-base' 'qt6-declarative')
+makedepends=('extra-cmake-modules' 'gettext' 'git' 'pkgconf' 'qcoro-qt6')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=('spacebar::git+https://invent.kde.org/plasma-mobile/spacebar.git')
+sha256sums=('SKIP')
+
+pkgver() {
+    cd "$srcdir/${pkgname%-git}"
+
+    printf "%s" "$(git describe --long | sed 's/\([^-]*-\)g/r\1/;s/-/./g')"
+}
+
+build() {
+    cmake -B build -S "${srcdir}/${pkgname%-git}" \
+        -DCMAKE_BUILD_TYPE='None' \
+        -DCMAKE_INSTALL_PREFIX='/usr' \
+        -Wno-dev
+    cmake --build build  
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install build
+}
